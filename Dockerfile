@@ -1,5 +1,9 @@
 FROM wordpress:latest
 
-# Remove only the conflicting MPM (event/worker); mpm_prefork is already
-# enabled by mod_php and must stay loaded for PHP to work.
-RUN find /etc/apache2/mods-enabled/ \( -name 'mpm_event*' -o -name 'mpm_worker*' \) -delete
+# COPY busts Railway's build cache. The wrapper removes conflicting MPMs
+# at runtime right before Apache starts, which is more reliable than
+# build-time fixes that get swallowed by layer caching.
+COPY apache2-foreground-wrapper.sh /usr/local/bin/apache2-foreground-wrapper.sh
+RUN chmod +x /usr/local/bin/apache2-foreground-wrapper.sh \
+    && mv /usr/local/bin/apache2-foreground /usr/local/bin/apache2-foreground.orig \
+    && mv /usr/local/bin/apache2-foreground-wrapper.sh /usr/local/bin/apache2-foreground
