@@ -1,0 +1,24 @@
+# WordPress core (provided by the Docker image)
+/wp-admin/
+/wp-includes/
+/wp-*.php
+/index.php
+/xmlrpc.php
+/license.txt
+/readme.html
+
+# Uploads (runtime data, not source code)
+wp-content/uploads/
+
+# WordPress config (contains secrets)
+wp-config.php
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Environment files
+.env
+.env.local
