@@ -1,11 +1,5 @@
 FROM wordpress:latest
 
-RUN echo "=== MPM files before fix ===" \
-    && find /etc/apache2/mods-enabled/ -name 'mpm_*' | sort \
-    && echo "=== Running fix ===" \
-    && find /etc/apache2/mods-enabled/ -name 'mpm_*' -delete \
-    && echo "=== MPM files after delete ===" \
-    && (find /etc/apache2/mods-enabled/ -name 'mpm_*' | sort || echo "none") \
-    && a2enmod mpm_prefork \
-    && echo "=== MPM files after a2enmod ===" \
-    && find /etc/apache2/mods-enabled/ -name 'mpm_*' | sort
+# Remove only the conflicting MPM (event/worker); mpm_prefork is already
+# enabled by mod_php and must stay loaded for PHP to work.
+RUN find /etc/apache2/mods-enabled/ \( -name 'mpm_event*' -o -name 'mpm_worker*' \) -delete
